@@ -2,7 +2,7 @@ let wordPairs = [];
 let currentPlayer = 1;
 let flippedCards = [];
 let boardLocked = false;
-let playerScores = [0, 0];
+let playerScores = [0, 0]; // Array to hold scores for Player 1 and Player 2
 
 document.getElementById("word-form").addEventListener("submit", startGame);
 
@@ -26,6 +26,7 @@ function startGame(event) {
     setupBoard();
     document.getElementById("word-form").style.display = "none";
     document.getElementById("game-container").style.display = "block";
+    updateTurnIndicator(); // Initialize turn indicator with player names and scores
 }
 
 function shuffle(array) {
@@ -69,12 +70,13 @@ function checkMatch() {
     if (isMatch) {
         card1.removeEventListener("click", () => flipCard(card1));
         card2.removeEventListener("click", () => flipCard(card2));
-        playerScores[currentPlayer - 1]++;
-        updateTurnIndicator();
+        playerScores[currentPlayer - 1]++; // Add a point to the current player's score
+        updateTurnIndicator(); // Update the score display
         flippedCards = [];
 
+        // Check if the game is over
         if (playerScores.reduce((a, b) => a + b) === wordPairs.length / 2) {
-            setTimeout(() => alert("Game Over!"), 500);
+            setTimeout(() => alert("Game Over! Final Scores - Player 1: " + playerScores[0] + ", Player 2: " + playerScores[1]), 500);
         }
     } else {
         boardLocked = true;
@@ -85,7 +87,7 @@ function checkMatch() {
             card2.innerHTML = '';
             flippedCards = [];
             boardLocked = false;
-            switchPlayer();
+            switchPlayer(); // Switch the player if there was no match
         }, 1000);
     }
 }
