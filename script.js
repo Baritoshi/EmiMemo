@@ -16,14 +16,15 @@ function startGame(event) {
     const inputs = document.querySelectorAll("#pairs-input input");
     wordPairs = [];
 
+    // Collect pairs of words from the form input
     for (let i = 0; i < inputs.length; i += 2) {
         const engWord = inputs[i].value;
         const plWord = inputs[i + 1].value;
         wordPairs.push({ text: engWord, lang: 'EN' }, { text: plWord, lang: 'PL' });
     }
 
-    shuffle(wordPairs);
-    setupBoard();
+    shuffle(wordPairs); // Shuffle the word pairs
+    setupBoard(); // Set up the game board with the shuffled pairs
     document.getElementById("word-form").style.display = "none";
     document.getElementById("game-container").style.display = "block";
     updateTurnIndicator(); // Initialize turn indicator with player names and scores
@@ -45,7 +46,7 @@ function setupBoard() {
         card.dataset.index = index;
         card.dataset.text = pair.text;
         card.dataset.lang = pair.lang;
-        card.innerHTML = '';
+        card.innerHTML = ''; // Start with empty content
         card.addEventListener("click", () => flipCard(card));
         board.appendChild(card);
     });
@@ -68,17 +69,25 @@ function checkMatch() {
     const isMatch = card1.dataset.text === card2.dataset.text && card1.dataset.lang !== card2.dataset.lang;
 
     if (isMatch) {
-        card1.removeEventListener("click", () => flipCard(card1));
-        card2.removeEventListener("click", () => flipCard(card2));
-        playerScores[currentPlayer - 1]++; // Add a point to the current player's score
+        // Hide the cards if they match by making them invisible
+        setTimeout(() => {
+            card1.style.visibility = "hidden";
+            card2.style.visibility = "hidden";
+        }, 500);
+
+        // Award point to current player
+        playerScores[currentPlayer - 1]++;
         updateTurnIndicator(); // Update the score display
+
+        // Clear flipped cards array to allow for new matches
         flippedCards = [];
 
         // Check if the game is over
         if (playerScores.reduce((a, b) => a + b) === wordPairs.length / 2) {
-            setTimeout(() => alert("Game Over! Final Scores - Player 1: " + playerScores[0] + ", Player 2: " + playerScores[1]), 500);
+            setTimeout(() => alert(`Game Over! Final Scores - Player 1: ${playerScores[0]}, Player 2: ${playerScores[1]}`), 500);
         }
     } else {
+        // Lock the board temporarily and unflip cards after a delay
         boardLocked = true;
         setTimeout(() => {
             card1.classList.remove("flipped");
